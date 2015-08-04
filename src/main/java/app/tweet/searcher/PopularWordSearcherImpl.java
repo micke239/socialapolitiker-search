@@ -1,4 +1,4 @@
-package app.tweet;
+package app.tweet.searcher;
 
 import java.time.LocalDate;
 import java.time.ZoneId;
@@ -18,21 +18,13 @@ import org.springframework.data.elasticsearch.core.query.NativeSearchQuery;
 import org.springframework.data.elasticsearch.core.query.NativeSearchQueryBuilder;
 import org.springframework.stereotype.Service;
 
+import app.tweet.dto.PopularWord;
+
 @Service
-public class TweetSearcherImpl implements TweetSearcher {
+public class PopularWordSearcherImpl implements PopularWordSearcher {
 
     @Autowired
-    ElasticsearchOperations elasticsearchOperations;
-
-    @Override
-    public List<TweetedWord> getTweetedWordForParty(String partyUrlName) {
-        return tweetedWordsWithQuery(QueryBuilders.matchQuery("partyUrlName", partyUrlName));
-    }
-
-    @Override
-    public List<TweetedWord> getTweetedWordForPolitician(String politician) {
-        return tweetedWordsWithQuery(QueryBuilders.matchQuery("politicianTwitterScreenName", politician));
-    }
+    private ElasticsearchOperations elasticsearchOperations;
 
     @Override
     public List<PopularWord> getPopularWordsForParty(String party) {
@@ -42,22 +34,6 @@ public class TweetSearcherImpl implements TweetSearcher {
     @Override
     public List<PopularWord> getPopularWordsForPolitician(String politician) {
         return popularWordsWithQuery(QueryBuilders.matchQuery("politicianTwitterScreenName", politician));
-    }
-
-    private List<TweetedWord> tweetedWordsWithQuery(QueryBuilder queryBuilder) {
-        NativeSearchQuery query = new NativeSearchQueryBuilder()
-                .addAggregation(
-                        AggregationBuilders.terms("words").field("tweetedWords").size(100)
-                                .order(org.elasticsearch.search.aggregations.bucket.terms.Terms.Order.count(false))
-                                .shardSize(0)).withQuery(queryBuilder).withIndices("tweet").build();
-
-        return elasticsearchOperations.query(query, (response) -> {
-            Terms terms = response.getAggregations().get("words");
-
-            return terms.getBuckets().stream().map((bucket) -> {
-                return new TweetedWord(bucket.getKey(), bucket.getDocCount());
-            }).collect(Collectors.toList());
-        });
     }
 
     private List<PopularWord> popularWordsWithQuery(QueryBuilder queryBuilder) {

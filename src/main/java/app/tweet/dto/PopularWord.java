@@ -1,4 +1,4 @@
-package app.tweet;
+package app.tweet.dto;
 
 import java.time.LocalDate;
 
