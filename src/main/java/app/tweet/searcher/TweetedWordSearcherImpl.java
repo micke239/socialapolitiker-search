@@ -34,7 +34,7 @@ public class TweetedWordSearcherImpl implements TweetedWordSearcher {
     private List<TweetedEntity> tweetedWordsWithQuery(QueryBuilder queryBuilder) {
         NativeSearchQuery query = new NativeSearchQueryBuilder()
                 .addAggregation(
-                        AggregationBuilders.terms("words").field("tweetedWords").size(100)
+                        AggregationBuilders.terms("words").field("tweetedWords").size(20)
                                 .order(org.elasticsearch.search.aggregations.bucket.terms.Terms.Order.count(false))
                                 .shardSize(0)).withQuery(queryBuilder).withIndices("tweet").build();
 

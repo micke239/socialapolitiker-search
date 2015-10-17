@@ -76,7 +76,7 @@ public class TweetSearchController {
         return tweetedHashtagSearcher.getTweetedEntitysForParty(partyUrlName);
     }
 
-    @RequestMapping("/tweeted-user-metions/politician")
+    @RequestMapping("/tweeted-user-mentions/politician")
     public List<TweetedEntity> tweetedUserMentionsPolitician(@RequestParam String politician) {
         return tweetedUserMentionSearcher.getTweetedEntitysForPolitician(politician);
     }
